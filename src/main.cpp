@@ -20,6 +20,6 @@ int main(int argc, char *argv[]) {
                              QMessageBox::warning(&login, "Login", "No se conectó a la BD");
                          }
                      });
-    login.show();
+        login.show();
     return core.exec();
 }
