@@ -28,10 +28,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/views/login/LoginWindow.cpp
         src/models/Auth/AuthManager.h src/models/Auth/AuthManager.cpp
         src/models/Auth/DbManager.h src/models/Auth/DbManager.cpp
-        src/.env
-
-
-
 
     )
 # Define target properties for Android with Qt 6 as:
