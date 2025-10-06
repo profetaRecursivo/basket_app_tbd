@@ -12,11 +12,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets LinguistTools)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets LinguistTools)
 
-set(TS_FILES Basquet_App_es_BO.ts)
+# set(TS_FILES Basquet_App_es_BO.ts)
 
 set(PROJECT_SOURCES
-
-        ${TS_FILES}
+        # ${TS_FILES}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -26,16 +25,21 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/main.cpp
         src/views/login/LoginWindow.h
         src/views/login/LoginWindow.cpp
-        src/models/Auth/AuthManager.h src/models/Auth/AuthManager.cpp
-        src/models/Auth/DbManager.h src/models/Auth/DbManager.cpp
-
+        src/views/main/MainWindow.h
+        src/views/main/MainWindow.cpp
+        src/models/Auth/AuthManager.h 
+        src/models/Auth/AuthManager.cpp
+        src/models/Auth/DbManager.h 
+        src/models/Auth/DbManager.cpp
+        src/models/Auth/UIGetter.h
+        src/models/Auth/UIGetter.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Basquet_App APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
 # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 
-    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+    # qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
     if(ANDROID)
         add_library(Basquet_App SHARED
