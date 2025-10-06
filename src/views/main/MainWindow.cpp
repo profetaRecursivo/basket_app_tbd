@@ -23,13 +23,10 @@ MainWindow::MainWindow(int userId, QWidget *parent)
 
   m_layout->addSpacing(20);
 
-  // Inicializar el registro de UIs
   initializeUIRegistry();
 
-  // Obtener los IDs de UI permitidos para este usuario
   QVector<int> allowedUIIds = UIGetter::getUIIds(m_userId);
 
-  // Construir la interfaz con las UIs permitidas
   buildUI(allowedUIIds);
 
   m_layout->addStretch();
@@ -38,27 +35,22 @@ MainWindow::MainWindow(int userId, QWidget *parent)
 MainWindow::~MainWindow() {}
 
 void MainWindow::initializeUIRegistry() {
-  // Registramos cada UI con su id, texto, estilo y acción
-  // El id_ui debe coincidir con los IDs en la tabla UI de la BD
-  // IDs reales en BD: 14=DASHBOARD_ATLETA, 15=DASHBOARD_EQUIPO,
-  //                   16=REGISTRO_ATLETA, 17=REGISTRO_ENTRENADOR
-
-  m_uiRegistry[14] = {
+  m_uiRegistry[UI_DASHBOARD_ATLETA] = {
       "📊 Dashboard Individual",
       "background-color: #4CAF50; color: white; border-radius: 5px;",
       [this]() { onDashboardAtletaClicked(); }};
 
-  m_uiRegistry[15] = {
+  m_uiRegistry[UI_DASHBOARD_EQUIPO] = {
       "👥 Dashboard por Equipo",
       "background-color: #2196F3; color: white; border-radius: 5px;",
       [this]() { onDashboardEquipoClicked(); }};
 
-  m_uiRegistry[16] = {
+  m_uiRegistry[UI_REGISTRO_ATLETA] = {
       "✏️ Registrar Atletas",
       "background-color: #FF9800; color: white; border-radius: 5px;",
       [this]() { onRegistroAtletaClicked(); }};
 
-  m_uiRegistry[17] = {
+  m_uiRegistry[UI_REGISTRO_ENTRENADOR] = {
       "👤 Registrar Entrenadores",
       "background-color: #9C27B0; color: white; border-radius: 5px;",
       [this]() { onRegistroEntrenadorClicked(); }};
@@ -68,7 +60,7 @@ void MainWindow::initializeUIRegistry() {
 
 void MainWindow::buildUI(const QVector<int> &allowedUIIds) {
   if (allowedUIIds.isEmpty()) {
-    QLabel *noAccess = new QLabel("⚠️ No tienes acceso a ninguna UI", this);
+    QLabel *noAccess = new QLabel("⚠️ No tienes acceso a ninguna funcion", this);
     noAccess->setStyleSheet("color: red; font-size: 14px;");
     noAccess->setAlignment(Qt::AlignCenter);
     m_layout->addWidget(noAccess);
@@ -78,9 +70,7 @@ void MainWindow::buildUI(const QVector<int> &allowedUIIds) {
   qDebug() << "Construyendo UI con" << allowedUIIds.size()
            << "elementos permitidos";
 
-  // Iteramos sobre los IDs permitidos y creamos los botones
   for (int uiId : allowedUIIds) {
-    if (m_uiRegistry.contains(uiId)) {
       const UIMetadata &meta = m_uiRegistry[uiId];
 
       QPushButton *btn = new QPushButton(meta.buttonText, this);
@@ -90,41 +80,34 @@ void MainWindow::buildUI(const QVector<int> &allowedUIIds) {
       QFont btnFont("Arial", 12);
       btn->setFont(btnFont);
 
-      // Conectamos el botón a su acción usando la lambda del metadata
       connect(btn, &QPushButton::clicked, this, meta.action);
 
       m_layout->addWidget(btn);
 
-      qDebug() << "  ✓ Botón creado para UI ID:" << uiId << "-"
+      qDebug() << "Boton creado para UI ID:" << uiId << "-"
                << meta.buttonText;
-    } else {
-      qDebug() << "  ✗ Advertencia: UI ID" << uiId
-               << "no está registrado en m_uiRegistry";
     }
-  }
 }
+
 
 void MainWindow::onDashboardAtletaClicked() {
   QMessageBox::information(
       this, "Dashboard Individual",
-      "Aquí se mostraría el dashboard del atleta individual\n\n"
-      "- Estadísticas personales\n"
-      "- Historial de partidos\n"
-      "- Performance individual");
+      "Aqui se mostraria el dashboard del atleta individual\n");
 }
 
 void MainWindow::onDashboardEquipoClicked() {
   QMessageBox::information(
       this, "Dashboard por Equipo",
-      "Aquí se mostraría el dashboard completo del equipo\n\n"
-      "- Estadísticas del equipo\n"
+      "Aqui se mostraria el dashboard completo del equipo\n\n"
+      "- Estadisticas del equipo\n"
       "- Lista de atletas\n"
       "- Resultados de partidos");
 }
 
 void MainWindow::onRegistroAtletaClicked() {
   QMessageBox::information(this, "Registro de Atletas",
-                           "Aquí se mostraría el formulario para:\n\n"
+                           "Aqui se mostraria el formulario para:\n\n"
                            "- Crear nuevos atletas\n"
                            "- Editar datos de atletas\n"
                            "- Asignar a equipos");
@@ -132,7 +115,7 @@ void MainWindow::onRegistroAtletaClicked() {
 
 void MainWindow::onRegistroEntrenadorClicked() {
   QMessageBox::information(this, "Registro de Entrenadores",
-                           "Aquí se mostraría el formulario para:\n\n"
+                           "Aqui se mostraria el formulario para:\n\n"
                            "- Crear nuevos entrenadores\n"
                            "- Editar datos de entrenadores\n"
                            "- Asignar a equipos");

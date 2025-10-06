@@ -47,14 +47,14 @@ int AuthManager::validate(const QString &user, const QString &password) {
     if (!PQgetisnull(res, 0, 0)) {
       int id_userN = atoi(PQgetvalue(res, 0, 0));
       insertPID(id_userN, backendPid, conn);
-      resultCode = id_userN; // Retornar el ID del usuario, NO 1
+      resultCode = id_userN; 
     } else {
-      resultCode = 0; // Usuario/contraseña incorrectos
+      resultCode = 0; 
     }
   } else {
     qDebug() << "AuthManager::validate - error en consulta:"
              << PQerrorMessage(conn);
-    resultCode = -1; // Error de conexión
+    resultCode = -1;
   }
 
   if (res)

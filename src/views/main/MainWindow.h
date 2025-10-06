@@ -6,7 +6,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <functional>
-
+#include "../UIComponents.h"
 struct UIMetadata {
   QString buttonText;
   QString styleSheet;
