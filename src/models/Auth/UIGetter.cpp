@@ -8,7 +8,7 @@ QVector<int> UIGetter::getUIIds(int userId, PGconn *conn) {
   QVector<int> uiIds;
 
   if (!conn) {
-    qDebug() << "UIGetter::getUIIds - Error: conexión nula";
+    qDebug() << "UIGetter::getUIIds - Error: conexion nula";
     return uiIds;
   }
 
@@ -19,7 +19,7 @@ QVector<int> UIGetter::getUIIds(int userId, PGconn *conn) {
   PGresult *res =
       PQexecParams(conn, sql, 1, nullptr, paramValues, nullptr, nullptr, 0);
 
-  if (!res || PQresultStatus(res) != PGRES_TUPLES_OK) {
+  if (!res or PQresultStatus(res) != PGRES_TUPLES_OK) {
     qDebug() << "UIGetter::getUIIds - Error en consulta:"
              << PQerrorMessage(conn);
     if (res)

@@ -2,9 +2,11 @@
 #include "../../models/Auth/UIGetter.h"
 #include <QDebug>
 #include <QMessageBox>
+#include <cstdio>
 
 MainWindow::MainWindow(int userId, QWidget *parent, PGconn *conn)
-    : QMainWindow(parent), m_userId(userId), m_conn(conn) {
+    : QMainWindow(parent), m_userId(userId), m_conn(conn) {  
+  this->setAttribute(Qt::WA_DeleteOnClose);
   setWindowTitle("Basquet App TBD");
   resize(600, 400);
 
@@ -34,7 +36,6 @@ MainWindow::MainWindow(int userId, QWidget *parent, PGconn *conn)
 
 MainWindow::~MainWindow() {
   if (m_conn) {
-    qDebug() << "MainWindow::~MainWindow - Cerrando conexión a la BD";
     PQfinish(m_conn);
     m_conn = nullptr;
   }
