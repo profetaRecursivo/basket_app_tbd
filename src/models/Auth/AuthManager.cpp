@@ -24,7 +24,8 @@ void AuthManager::insertPID(int id_userN, int PID, PGconn *conn) {
     PQclear(res);
 }
 
-int AuthManager::validate(const QString &user, const QString &password) {
+int AuthManager::validate(const QString &user, const QString &password,
+                          PGconn **outConn) {
   DBManager dbmanager;
   PGconn *conn = dbmanager.connect();
   if (!conn) {
@@ -47,18 +48,23 @@ int AuthManager::validate(const QString &user, const QString &password) {
     if (!PQgetisnull(res, 0, 0)) {
       int id_userN = atoi(PQgetvalue(res, 0, 0));
       insertPID(id_userN, backendPid, conn);
-      resultCode = id_userN; 
+      resultCode = id_userN;
+      if (outConn) {
+        *outConn = conn;
+      }
     } else {
-      resultCode = 0; 
+      resultCode = 0;
+      PQfinish(conn);
     }
   } else {
     qDebug() << "AuthManager::validate - error en consulta:"
              << PQerrorMessage(conn);
     resultCode = -1;
+    PQfinish(conn);
   }
 
   if (res)
     PQclear(res);
-  PQfinish(conn);
+
   return resultCode;
 }

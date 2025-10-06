@@ -4,14 +4,11 @@
 
 UIGetter::UIGetter() {}
 
-QVector<int> UIGetter::getUIIds(int userId) {
+QVector<int> UIGetter::getUIIds(int userId, PGconn *conn) {
   QVector<int> uiIds;
 
-  DBManager dbManager;
-  PGconn *conn = dbManager.connect();
-
   if (!conn) {
-    qDebug() << "UIGetter::getUIIds - Error de conexión a la BD";
+    qDebug() << "UIGetter::getUIIds - Error: conexión nula";
     return uiIds;
   }
 
@@ -27,7 +24,6 @@ QVector<int> UIGetter::getUIIds(int userId) {
              << PQerrorMessage(conn);
     if (res)
       PQclear(res);
-    PQfinish(conn);
     return uiIds;
   }
 
@@ -40,7 +36,6 @@ QVector<int> UIGetter::getUIIds(int userId) {
   }
 
   PQclear(res);
-  PQfinish(conn);
 
   return uiIds;
 }

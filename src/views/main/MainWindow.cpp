@@ -3,8 +3,8 @@
 #include <QDebug>
 #include <QMessageBox>
 
-MainWindow::MainWindow(int userId, QWidget *parent)
-    : QMainWindow(parent), m_userId(userId) {
+MainWindow::MainWindow(int userId, QWidget *parent, PGconn *conn)
+    : QMainWindow(parent), m_userId(userId), m_conn(conn) {
   setWindowTitle("Basquet App TBD");
   resize(600, 400);
 
@@ -25,14 +25,20 @@ MainWindow::MainWindow(int userId, QWidget *parent)
 
   initializeUIRegistry();
 
-  QVector<int> allowedUIIds = UIGetter::getUIIds(m_userId);
+  QVector<int> allowedUIIds = UIGetter::getUIIds(m_userId, m_conn);
 
   buildUI(allowedUIIds);
 
   m_layout->addStretch();
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() {
+  if (m_conn) {
+    qDebug() << "MainWindow::~MainWindow - Cerrando conexión a la BD";
+    PQfinish(m_conn);
+    m_conn = nullptr;
+  }
+}
 
 void MainWindow::initializeUIRegistry() {
   m_uiRegistry[UI_DASHBOARD_ATLETA] = {
@@ -71,24 +77,22 @@ void MainWindow::buildUI(const QVector<int> &allowedUIIds) {
            << "elementos permitidos";
 
   for (int uiId : allowedUIIds) {
-      const UIMetadata &meta = m_uiRegistry[uiId];
+    const UIMetadata &meta = m_uiRegistry[uiId];
 
-      QPushButton *btn = new QPushButton(meta.buttonText, this);
-      btn->setMinimumHeight(50);
-      btn->setStyleSheet(meta.styleSheet);
+    QPushButton *btn = new QPushButton(meta.buttonText, this);
+    btn->setMinimumHeight(50);
+    btn->setStyleSheet(meta.styleSheet);
 
-      QFont btnFont("Arial", 12);
-      btn->setFont(btnFont);
+    QFont btnFont("Arial", 12);
+    btn->setFont(btnFont);
 
-      connect(btn, &QPushButton::clicked, this, meta.action);
+    connect(btn, &QPushButton::clicked, this, meta.action);
 
-      m_layout->addWidget(btn);
+    m_layout->addWidget(btn);
 
-      qDebug() << "Boton creado para UI ID:" << uiId << "-"
-               << meta.buttonText;
-    }
+    qDebug() << "Boton creado para UI ID:" << uiId << "-" << meta.buttonText;
+  }
 }
-
 
 void MainWindow::onDashboardAtletaClicked() {
   QMessageBox::information(
