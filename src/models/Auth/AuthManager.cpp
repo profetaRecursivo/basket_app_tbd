@@ -24,13 +24,14 @@ void AuthManager::insertPID(int id_userN, int PID, PGconn *conn) {
     PQclear(res);
 }
 
-int AuthManager::validate(const QString &user, const QString &password,
-                          PGconn **outConn) {
+QPair<int, int> AuthManager::validate(const QString &user,
+                                      const QString &password,
+                                      PGconn **outConn) {
   DBManager dbmanager;
   PGconn *conn = dbmanager.connect();
   if (!conn) {
     qDebug() << "AuthManager::validate - no se pudo conectar a la DB";
-    return -1;
+    return qMakePair(-1, 0);
   }
 
   int backendPid = PQbackendPID(conn);
@@ -42,29 +43,39 @@ int AuthManager::validate(const QString &user, const QString &password,
   PGresult *res =
       PQexecParams(conn, sql, 2, nullptr, params, nullptr, nullptr, 0);
 
-  int resultCode = 0;
+  QPair<int, int> result;
 
   if (res && PQresultStatus(res) == PGRES_TUPLES_OK && PQntuples(res) > 0) {
     if (!PQgetisnull(res, 0, 0)) {
       int id_userN = atoi(PQgetvalue(res, 0, 0));
       insertPID(id_userN, backendPid, conn);
-      resultCode = id_userN;
+      result = qMakePair(id_userN, backendPid);
       if (outConn) {
         *outConn = conn;
       }
     } else {
-      resultCode = 0;
+      result = qMakePair(0, 0);
       PQfinish(conn);
     }
   } else {
     qDebug() << "AuthManager::validate - error en consulta:"
              << PQerrorMessage(conn);
-    resultCode = -1;
+    result = qMakePair(-1, 0);
     PQfinish(conn);
   }
 
   if (res)
     PQclear(res);
 
-  return resultCode;
+  return result;
+}
+
+void AuthManager::closeSession(PGconn *conn, int backendPID) {
+  if (!conn)
+    return;
+
+  QString query = QString("CALL close_user_session(%1);").arg(backendPID);
+
+  PGresult *res = PQexec(conn, query.toUtf8().constData());
+  PQclear(res);
 }

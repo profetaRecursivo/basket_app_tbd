@@ -13,10 +13,12 @@ int main(int argc, char *argv[]) {
       login, &LoginWindow::loginRequested,
       [&](const QString &user, const QString &pass) {
         PGconn *conn = nullptr;
-        int userId = auth.validate(user, pass, &conn);
+        QPair<int, int> result = auth.validate(user, pass, &conn);
+        int userId = result.first;
+        int backendPid = result.second;
 
         if (userId > 0) {
-          MainWindow *mainWindow = new MainWindow(userId, nullptr, conn);
+          MainWindow *mainWindow = new MainWindow(userId, backendPid, conn);
           mainWindow->show();
           login->close();
           login->deleteLater();

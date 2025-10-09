@@ -1,11 +1,15 @@
 #include "MainWindow.h"
+#include "../../models/Auth/AuthManager.h"
 #include "../../models/Auth/UIGetter.h"
+#include "../athlete/RegisterAthleteWindow.h"
 #include <QDebug>
 #include <QMessageBox>
 #include <cstdio>
 
-MainWindow::MainWindow(int userId, QWidget *parent, PGconn *conn)
-    : QMainWindow(parent), m_userId(userId), m_conn(conn) {  
+MainWindow::MainWindow(int userId, int backendPid, PGconn *conn,
+                       QWidget *parent)
+    : QMainWindow(parent), m_userId(userId), m_backendPid(backendPid),
+      m_conn(conn) {
   this->setAttribute(Qt::WA_DeleteOnClose);
   setWindowTitle("Basquet App TBD");
   resize(600, 400);
@@ -36,6 +40,7 @@ MainWindow::MainWindow(int userId, QWidget *parent, PGconn *conn)
 
 MainWindow::~MainWindow() {
   if (m_conn) {
+    AuthManager::closeSession(m_conn, m_backendPid);
     PQfinish(m_conn);
     m_conn = nullptr;
   }
@@ -111,11 +116,10 @@ void MainWindow::onDashboardEquipoClicked() {
 }
 
 void MainWindow::onRegistroAtletaClicked() {
-  QMessageBox::information(this, "Registro de Atletas",
-                           "Aqui se mostraria el formulario para:\n\n"
-                           "- Crear nuevos atletas\n"
-                           "- Editar datos de atletas\n"
-                           "- Asignar a equipos");
+  RegisterAthleteWindow *dialog =
+      new RegisterAthleteWindow(m_conn, m_backendPid, this);
+  dialog->exec();
+  delete dialog;
 }
 
 void MainWindow::onRegistroEntrenadorClicked() {

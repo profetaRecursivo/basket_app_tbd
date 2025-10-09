@@ -34,6 +34,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         src/models/Auth/UIGetter.h
         src/models/Auth/UIGetter.cpp
         src/views/UIComponents.h
+        src/models/Athlete/AthleteManager.h
+        src/models/Athlete/AthleteManager.cpp
+        src/views/athlete/RegisterAthleteWindow.h
+        src/views/athlete/RegisterAthleteWindow.cpp
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Basquet_App APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR

@@ -1,4 +1,4 @@
-#pragma once
+// #pragma once
 
 #include "../UIComponents.h"
 #include <QLabel>
@@ -18,12 +18,13 @@ class MainWindow : public QMainWindow {
   Q_OBJECT
 
 public:
-  explicit MainWindow(int userId, QWidget *parent = nullptr,
-                      PGconn *conn = nullptr);
+  explicit MainWindow(int userId, int backendPid, PGconn *conn = nullptr,
+                      QWidget *parent = nullptr);
   ~MainWindow();
 
 private:
   int m_userId;
+  int m_backendPid;
   PGconn *m_conn;
   QVBoxLayout *m_layout;
   QMap<int, UIMetadata> m_uiRegistry;

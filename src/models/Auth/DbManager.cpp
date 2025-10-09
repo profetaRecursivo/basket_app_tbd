@@ -6,7 +6,7 @@ DBManager::DBManager() {
 }
 PGconn* DBManager::connect() {
     const char* host = "localhost";
-    const char* dbname = "basket_app";
+    const char* dbname = "basket";
     const char* user = "jschavarria";
     const char* pass = "segmenttree";
 
