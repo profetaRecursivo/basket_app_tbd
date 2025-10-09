@@ -43,7 +43,6 @@ AthleteManager::insertAthlete(const QString &nombres, const QString &apellidos,
     return credentials;
   }
 
-  // Preparar parámetros
   QByteArray bNombres = nombres.toUtf8();
   QByteArray bApellidos = apellidos.toUtf8();
   QByteArray bFecha = fechaNacimiento.toString("yyyy-MM-dd").toUtf8();
@@ -69,7 +68,6 @@ AthleteManager::insertAthlete(const QString &nombres, const QString &apellidos,
     return credentials;
   }
 
-  // Obtener usuario y contraseña generados
   QString generatedUser = QString::fromUtf8(PQgetvalue(res, 0, 0));
   QString generatedPassword = QString::fromUtf8(PQgetvalue(res, 0, 1));
 
