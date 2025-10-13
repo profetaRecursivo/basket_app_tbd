@@ -69,6 +69,30 @@ find_package(PostgreSQL REQUIRED)
 target_include_directories(Basquet_App PRIVATE ${PostgreSQL_INCLUDE_DIRS})
 target_link_libraries(Basquet_App PRIVATE ${PostgreSQL_LIBRARIES})
 
+# Configurar ODB ORM
+find_program(ODB_EXECUTABLE odb)
+if(NOT ODB_EXECUTABLE)
+    message(FATAL_ERROR "ODB compiler not found. Please install ODB from AUR: yay -S odb")
+endif()
+
+# Buscar librerías ODB
+find_library(ODB_LIBRARY NAMES odb)
+find_library(ODB_PGSQL_LIBRARY NAMES odb-pgsql)
+
+if(NOT ODB_LIBRARY OR NOT ODB_PGSQL_LIBRARY)
+    message(FATAL_ERROR "ODB libraries not found. Install: yay -S libodb libodb-pgsql")
+endif()
+
+message(STATUS "ODB compiler found: ${ODB_EXECUTABLE}")
+message(STATUS "ODB library found: ${ODB_LIBRARY}")
+message(STATUS "ODB PostgreSQL library found: ${ODB_PGSQL_LIBRARY}")
+
+# Incluir headers de ODB
+target_include_directories(Basquet_App PRIVATE /usr/include)
+
+# Linkear librerías ODB
+target_link_libraries(Basquet_App PRIVATE ${ODB_LIBRARY} ${ODB_PGSQL_LIBRARY})
+
 
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
